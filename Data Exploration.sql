@@ -1,6 +1,6 @@
 
 
-			-- Data we will be using
+			-- Data we will be using throughout the project
 	SELECT  
 				location , date , total_cases , new_cases , total_deaths , population
 			FROM 
@@ -35,8 +35,9 @@
 			WHERE continent is not null
 			ORDER BY 1,2 ;
 	
-			--Looking at the countries with highest contamination rate compared to population
-
+			--Looking at the countries with highest contamination rate compared to population.
+			-- Here we add the continent is not null because the continent column is null at places and corresponding to that the location column(which is for countries) has the asia in it.
+			-- So we decided to exclude that all and used this "continent is not null".
 
 		
 	SELECT  
@@ -51,6 +52,7 @@
 
 		--Looking at the Countries with highest death per population
 		--exculding the continents and world from locations
+		--Using cast to change data type of column total_deaths because its type is nvarchar which is not suitabe for aggregate functions.
 
 
 	
@@ -65,7 +67,7 @@
 
 
 
-		--Continents with highest death count per population
+		--Continents with highest death count per population.
 
 		
 	SELECT  
@@ -93,6 +95,7 @@
 
 
 			--Looking at TOTAL POPULATION VS VACCINATIONS 
+			--Here we used windows fucntion with aggregate function by partitions to get the sum of each location that got vaccinations. 
 
 			with popvsvac (continent,location,date,population,new_vaccinations,rolling_people_vaccinated) 
 			as
@@ -106,7 +109,7 @@
 			order by location,date
 
 
-			--TEMP TABLE
+			--Doing the same thing using the TEMP TABLE
 
 			DROP TABLE IF EXISTS #PERCENTPOPULATIONVACCINATED
 
@@ -135,7 +138,6 @@
 
 
 			--- CREATING VIEW TO STORE DATA FOR LATER VISUALIZATIONS
-
 
 			CREATE VIEW	PERCENTPOPULATIONVACCINATED as
 			SELECT d.continent,d.location,d.date,d.population,c.new_vaccinations, SUM(convert(int,c.new_vaccinations)) OVER(partition by d.location ORDER BY d.location,d.date) as rolling_people_vaccinated
